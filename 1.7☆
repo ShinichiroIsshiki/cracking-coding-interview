@@ -1,0 +1,81 @@
+import java.util.*;
+
+public class Main {
+
+    // 90度回転させるメソッド
+    public static void rotate(int[][] matrix) {
+        int n = matrix.length;
+
+        // 各層を順に回転処理する
+        // n / 2までの層を処理します（中央の要素は回転の必要がないため）
+        for (int layer = 0; layer < n / 2; layer++) {
+            int first = layer;
+            int last = n - 1 - layer;
+
+            // 各層の外周の要素を回転
+            for (int i = first; i < last; i++) {
+                // offsetは現在処理している層の位置を表します。
+                int offset = i - first;
+
+                // 保存：上端の要素
+                int top = matrix[first][i];
+
+                // 左端の要素を上端に移動
+                matrix[first][i] = matrix[last - offset][first];
+
+                // 下端の要素を左端に移動
+                matrix[last - offset][first] = matrix[last][last - offset];
+
+                // 右端の要素を下端に移動
+                matrix[last][last - offset] = matrix[i][last];
+
+                // 保存しておいた上端の要素を右端に移動
+                matrix[i][last] = top;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // 行列のサイズを入力
+        System.out.print("Enter the size of the matrix (N): ");
+        int n = sc.nextInt();
+        
+        // 二次元配列を初期化
+        int[][] matrix = new int[n][n];
+
+        // 配列の各要素を入力
+        System.out.println("Enter the elements of the matrix row by row:");
+        /*
+        期待される入力:
+        3
+        1 2 3
+        4 5 6
+        7 8 9
+        */
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = sc.nextInt();
+            }
+        }
+
+        // 配列を90度回転させる
+        rotate(matrix);
+
+        // 回転後の行列を出力
+        System.out.println("The rotated matrix is:");
+        /*
+        期待される出力:
+        7 4 1
+        8 5 2
+        9 6 3
+        */
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
