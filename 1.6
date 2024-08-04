@@ -1,0 +1,31 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // スキャナーを使ってユーザーからの入力を取得
+        Scanner sc = new Scanner(System.in);
+        // ユーザーからの入力文字列
+        String str = sc.next();
+        // 圧縮後の文字列を格納する変数
+        String encoded = "";
+
+        // 連続する文字のカウント
+        int count = 1;
+        // 入力文字列を一文字ずつループで処理
+        for (int i = 0; i < str.length(); i++) {
+            // 次の文字が存在し、かつ現在の文字と同じ場合、カウントを増やす
+            if (i + 1 < str.length() && str.charAt(i) == str.charAt(i + 1)) {
+                count++;
+            } else {
+                // 次の文字が異なる場合、現在の文字とそのカウントをencodedに追加
+                encoded += str.charAt(i);
+                encoded += count;
+                // カウントをリセット
+                count = 1;
+            }
+        }
+
+        // 圧縮された文字列を出力
+        System.out.println(encoded);
+    }
+}
