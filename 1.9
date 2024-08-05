@@ -1,0 +1,45 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // スキャナを使用して標準入力からデータを読み取る
+        Scanner sc = new Scanner(System.in);
+        
+        // 1つ目の文字列を入力
+        String s1 = sc.next();
+        // 2つ目の文字列を入力
+        String s2 = sc.next();
+
+        // s1を2回繰り返して作成した文字列s1s1を生成
+        String s1s1 = s1 + s1;
+        
+        // s2がs1s1の部分文字列かどうかをチェック
+        boolean check = isSubstring(s1s1, s2);
+
+        // チェック結果に応じてYesまたはNoを出力
+        if (check) {
+            System.out.println("Yes");
+        } else {
+            System.out.println("No");
+        }
+    }
+
+    // s2がs1の部分文字列かどうかをチェックする関数
+    // s1にs2が含まれているかどうかを確認する
+    public static boolean isSubstring(String s1, String s2) {
+        return s1.contains(s2);
+    }
+}
+
+/*
+期待する入力と出力
+
+入力例 1:
+waterbottle erbottlewat
+
+出力例 1:
+Yes
+
+説明: "waterbottle"を回転させると"erbottlewat"になるため、出力は"Yes"。
+
+*/
