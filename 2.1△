@@ -1,0 +1,58 @@
+import java.util.HashSet;
+import CtCILibrary.LinkedListNode;
+
+public class Main {
+
+    // 連結リストの重複する要素を削除するメソッド
+    public static void deleteDups(LinkedListNode n) {
+        // 重複チェックのためのセット
+        HashSet<Integer> set = new HashSet<>();
+        // 前のノードを追跡するための変数
+        LinkedListNode previous = null;
+
+        // 連結リストを順に走査
+        while (n != null) {
+            // 現在のノードのデータがセットに含まれているかチェック
+            if (set.contains(n.data)) {
+                // 現在のノードのデータが重複している場合
+                // 前のノードのnextを現在のノードのnextに設定
+                // これにより、現在のノードはリストから削除される
+                previous.next = n.next;
+            } else {
+                // 現在のノードのデータが重複していない場合
+                // データをセットに追加
+                set.add(n.data);
+                // 前のノードを現在のノードに更新
+                previous = n;
+            }
+            // 次のノードに進む
+            n = n.next;
+        }
+    }
+
+    public static void main(String[] args) {    
+        // 連結リストの初期ノードを作成
+        LinkedListNode first = new LinkedListNode(0, null, null);
+        // headはリストの先頭ノードを保持
+        LinkedListNode head = first;
+        LinkedListNode second = first;
+
+        // リストにノードを追加（重複要素を含む）
+        for (int i = 1; i < 8; i++) {
+            second = new LinkedListNode(i % 3, null, null);
+
+            first.setNext(second);
+            second.setPrevious(first);
+            first = second;
+        }
+
+        // 重複ありのリストを表示
+        System.out.println("重複あり: " + head.printForward());
+        
+        // 重複する要素を削除
+        deleteDups(head);
+        
+        // 重複なしのリストを表示
+        System.out.println("重複なし: " + head.printForward());
+    }
+}
