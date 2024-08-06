@@ -46,10 +46,10 @@ public class Main {
             first = second;
         }
 
-        // 重複ありのリストを表示する
+        // 重複ありのリストを表示
         System.out.println("重複あり: " + head.printForward());
         
-        // 重複する要素を削除する
+        // 重複する要素を削除
         deleteDups(head);
         
         // 重複なしのリストを表示する
