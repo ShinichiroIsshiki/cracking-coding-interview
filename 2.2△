@@ -1,0 +1,34 @@
+import java.util.HashSet;
+
+import CtCILibrary.AssortedMethods;
+import CtCILibrary.LinkedListNode;
+
+public class Main {
+
+    // 再帰的に末尾からk番目の要素を見つける関数
+    public static int printKthToLast(LinkedListNode head, int k) {
+        // ベースケース: リストの末尾に到達した場合
+        if (head == null) {
+            return 0; // インデックス0を返す
+        }
+        // 再帰呼び出しで次のノードに進み、インデックスをカウント
+        int index = printKthToLast(head.next, k) + 1;
+        // 現在のインデックスがkと一致した場合、要素を出力
+        if (index == k) {
+            System.out.println("末尾から" + k + "番目の要素は" + head.data);
+        }
+        // 現在のインデックスを返す
+        return index;
+    }
+
+    public static void main(String[] args) {
+        // 配列を作成
+        int[] array = {0, 1, 2, 3, 4, 5, 6};
+        // 配列から連結リストを作成
+        LinkedListNode head = AssortedMethods.createLinkedListFromArray(array);
+        // 配列の各要素に対して末尾からの位置を出力
+        for (int i = 0; i < array.length; i++) {
+            printKthToLast(head, i);
+        }
+    }
+}
