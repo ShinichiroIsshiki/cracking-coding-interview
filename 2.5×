@@ -1,0 +1,80 @@
+package Q2_05_Sum_Lists;
+
+import CtCILibrary.LinkedListNode;
+
+public class QuestionA {
+
+    // メインの加算処理を呼び出すメソッド
+    private static LinkedListNode addLists(LinkedListNode l1, LinkedListNode l2) {
+        return addLists(l1, l2, 0); // 初期キャリーは0
+    }
+    
+    // 再帰的に2つのリストの各桁を加算するメソッド
+    private static LinkedListNode addLists(LinkedListNode l1, LinkedListNode l2, int carry) {
+        // ベースケース: 両方のリストがnullでキャリーも0なら終了
+        if (l1 == null && l2 == null && carry == 0) {
+            return null;
+        }
+        
+        // 新しいノードを作成し、現在の桁の値を計算
+        LinkedListNode result = new LinkedListNode();
+        int value = carry; // キャリーを初期値に設定
+        if (l1 != null) {
+            value += l1.data; // l1の値を追加
+        }
+        if (l2 != null) {
+            value += l2.data; // l2の値を追加
+        }
+        
+        // 現在の桁の値をリストのノードに設定（10で割った余り）
+        result.data = value % 10;
+        
+        // 次の桁に進む処理がある場合
+        if (l1 != null || l2 != null) {
+            // 次の桁に移動し、新しいキャリーを計算
+            LinkedListNode more = addLists(l1 == null ? null : l1.next, 
+                                           l2 == null ? null : l2.next, 
+                                           value >= 10 ? 1 : 0);
+            result.setNext(more); // 次の桁のノードを設定
+        }
+        
+        return result; // 計算結果のリストを返す
+    }
+    
+    // リンクリストを整数に変換するユーティリティメソッド
+    public static int linkedListToInt(LinkedListNode node) {
+        int value = 0;
+        if (node.next != null) {
+            value = 10 * linkedListToInt(node.next); // 再帰的に次の桁を処理
+        }
+        return value + node.data; // 現在の桁の値を追加
+    }   
+    
+    public static void main(String[] args) {
+        // リストlA: 999
+        LinkedListNode lA1 = new LinkedListNode(9, null, null);
+        LinkedListNode lA2 = new LinkedListNode(9, null, lA1);
+        LinkedListNode lA3 = new LinkedListNode(9, null, lA2);
+        
+        // リストlB: 100
+        LinkedListNode lB1 = new LinkedListNode(1, null, null);
+        LinkedListNode lB2 = new LinkedListNode(0, null, lB1);
+        LinkedListNode lB3 = new LinkedListNode(0, null, lB2);    
+        
+        // 2つのリストを加算
+        LinkedListNode list3 = addLists(lA1, lB1);
+        
+        // 結果の表示
+        System.out.println("  " + lA1.printForward());        
+        System.out.println("+ " + lB1.printForward());            
+        System.out.println("= " + list3.printForward());    
+        
+        // リンクリストを整数に変換して表示
+        int l1 = linkedListToInt(lA1);
+        int l2 = linkedListToInt(lB1);
+        int l3 = linkedListToInt(list3);
+        
+        System.out.print(l1 + " + " + l2 + " = " + l3 + "\n");
+        System.out.print(l1 + " + " + l2 + " = " + (l1 + l2));        
+    }
+}
