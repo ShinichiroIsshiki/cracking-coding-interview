@@ -1,6 +1,6 @@
 import CtCILibrary.LinkedListNode;
 
-public class QuestionA {
+public class Main {
 
     // メインの加算処理を呼び出すメソッド
     private static LinkedListNode addLists(LinkedListNode l1, LinkedListNode l2) {
