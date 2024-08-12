@@ -1,0 +1,61 @@
+import CtCILibrary.LinkedListNode;
+
+public class Main {
+    // リンクリストが回文かどうかを判断する関数
+    public static boolean isPalindrome(LinkedListNode head){
+        LinkedListNode reversed = reverseAndClone(head); // リストを逆順に複製
+        return isEqual(head,reversed); // 元のリストと逆順リストを比較
+    }
+
+	// リンクリストを逆順に複製する関数
+	public static LinkedListNode reverseAndClone(LinkedListNode node) {
+		LinkedListNode head = null; // 逆順リストのヘッド
+		while (node != null) {
+			LinkedListNode n = new LinkedListNode(node.data); // 現在のノードを複製
+			n.next = head; // 新しいノードを逆順リストの先頭に追加
+			head = n; // 新しいヘッドを更新
+			node = node.next; // 元のリストの次のノードに進む
+		}
+		return head; // 逆順に複製されたリストのヘッドを返す
+	}	
+
+	// 2つのリンクリストが等しいかを比較する関数
+	public static boolean isEqual(LinkedListNode one, LinkedListNode two) {
+		while (one != null && two != null) {
+			if (one.data != two.data) { // ノードのデータが異なれば false を返す
+				return false;
+			}
+			one = one.next; // 次のノードに進む
+			two = two.next; // 次のノードに進む
+		}
+		// 両方のリストが同じ長さで最後まで一致していれば true、それ以外は false
+		return one == null && two == null;
+        // one,twoの二つの長さが一緒であることが保証されてたらreturn true;でもOK
+	}
+    public static void main(String[] args){
+        int length = 9;
+        LinkedListNode[] nodes = new LinkedListNode[length];
+        for(int i = 0;i<length;i++){
+            // リンクリストのノードを作成し、回文となるようにデータを設定
+            //0 -> 1 -> 2 -> 3 -> 4 -> 3 -> 2 -> 1 -> 0の連結リストを作成している
+            nodes[i] = new LinkedListNode(i>=length/2 ? length -i -1:i,null,null);
+        }
+
+        // 各ノードをリンクして、リンクリストを構築
+        for(int i = 0;i<length;i++){
+            if(i<length-1){
+                nodes[i].setNext(nodes[i+1]);
+            }
+            if(i>0){
+                nodes[i].setPrevious(nodes[i-1]);
+            }
+        }
+
+		LinkedListNode head = nodes[0]; // リストのヘッドを取得
+		System.out.println(head.printForward()); // リストを順方向に出力
+		System.out.println(isPalindrome(head)); // リストが回文かどうかを判定して出力
+
+
+    }
+    
+}
