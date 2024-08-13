@@ -1,0 +1,59 @@
+import CtCILibrary.LinkedListNode;
+
+public class Main {
+
+    // リンクリスト内のループの開始地点を見つける関数
+	public static LinkedListNode FindBeginning(LinkedListNode head) {
+		LinkedListNode slow = head;
+		LinkedListNode fast = head; 
+		
+		// リンクリストの中で「出会いポイント」を探す
+		while (fast != null && fast.next != null) { 
+			slow = slow.next; // スローは1ステップずつ進む
+			fast = fast.next.next; // ファストは2ステップずつ進む
+			if (slow == fast) {
+				break; // スローとファストが出会うとループの存在が確認される
+			}
+		}
+
+		// エラーチェック - もし出会いがなければループは存在しない
+		if (fast == null || fast.next == null) {
+			return null; // ループがない場合はnullを返す
+		}
+
+		/* スローを先頭に戻す。ファストは出会いポイントに留まる。
+		/* 両者はループの開始地点までkステップ分離れている。
+		 * 同じペースで進むと、ループの開始地点で再び出会う。 */
+		slow = head; 
+		while (slow != fast) { 
+			slow = slow.next; // スローを1ステップ進める
+			fast = fast.next; // ファストも1ステップ進める
+		}
+		
+		// 両者がループの開始地点を指す
+		return fast;
+	}
+	
+	public static void main(String[] args) {
+		int list_length = 100;
+		int k = 10;
+		
+		// リンクリストを作成
+		LinkedListNode[] nodes = new LinkedListNode[list_length];
+		for (int i = 0; i < list_length; i++) {
+			nodes[i] = new LinkedListNode(i, null, i > 0 ? nodes[i - 1] : null);
+		}
+		
+		// リンクリストにループを作成
+		nodes[list_length - 1].next = nodes[list_length - k];
+		
+		// ループの開始地点を探す
+		LinkedListNode loop = FindBeginning(nodes[0]);
+		if (loop == null) {
+			System.out.println("No Cycle."); // ループがない場合のメッセージ
+		} else {
+			System.out.println(loop.data); // ループ開始地点のデータを表示
+		}
+	}
+
+}
