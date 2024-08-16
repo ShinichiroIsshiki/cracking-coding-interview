@@ -41,7 +41,7 @@ public class Main {
         // 配列内の値を順番にスタックにプッシュ
         for (int value : array) {
             stack.push(value);
-            System.out.println("Pushed: " + value + ", Current Min: " + stack.min());
+            System.out.println("プッシュされた値: " + value + ", 現在の最小値: " + stack.min());
         }
 
         System.out.println();
@@ -49,7 +49,7 @@ public class Main {
         // スタックから値をポップし、最小値を表示
         for (int i = 0; i < array.length; i++) {
             int poppedValue = stack.pop().value; // ポップされた値
-            System.out.println("Popped: " + poppedValue + ", New Min: " + stack.min());
+            System.out.println("ポップされた値: " + poppedValue + ", 新しい最小値: " + stack.min());
         }
     }
 }
