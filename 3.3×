@@ -1,0 +1,154 @@
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+
+class Node {
+    public Node above;
+    public Node below;
+    public int value;
+
+    // コンストラクタ：ノードの値を設定
+    public Node(int value) {
+        this.value = value;
+    }
+}
+
+class Stack {
+    private int capacity;
+    public Node top;
+    public Node bottom;
+    public int size = 0;
+
+    // コンストラクタ：スタックの最大容量を設定
+    public Stack(int capacity) {
+        this.capacity = capacity;
+    }
+
+    // スタックが満杯かどうかを確認
+    public boolean isFull() {
+        return capacity == size;
+    }
+
+    // 2つのノードをリンクするメソッド
+    public void join(Node above, Node below) {
+        if (below != null) below.above = above;
+        if (above != null) above.below = below;
+    }
+
+    // スタックに新しい値をプッシュするメソッド
+    public boolean push(int v) {
+        if (size >= capacity) return false; // 容量を超える場合はプッシュを拒否
+        size++;
+        Node n = new Node(v); // 新しいノードを作成
+        if (size == 1) bottom = n; // 最初の要素ならそれが底になる
+        join(n, top);
+        top = n;
+        return true;
+    }
+
+    // スタックからトップの値をポップするメソッド
+    public int pop() {
+        if (top == null) throw new EmptyStackException();
+        Node t = top;
+        top = top.below;
+        size--;
+        return t.value;
+    }
+
+    // スタックが空かどうかを確認
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    // スタックの底から値を取り除くメソッド
+    public int removeBottom() {
+        Node b = bottom;
+        bottom = bottom.above;
+        if (bottom != null) bottom.below = null;
+        size--;
+        return b.value;
+    }
+}
+
+class SetOfStacks {
+    ArrayList<Stack> stacks = new ArrayList<>();
+    public int capacity;
+
+    // コンストラクタ：各スタックの容量を設定
+    public SetOfStacks(int capacity) {
+        this.capacity = capacity;
+    }
+
+    // 最後のスタックを取得するメソッド
+    public Stack getLastStack() {
+        if (stacks.size() == 0) {
+            return null;
+        }
+        return stacks.get(stacks.size() - 1);
+    }
+
+    // 新しい値をセットにプッシュするメソッド
+    public void push(int v) {
+        Stack last = getLastStack();
+        if (last != null && !last.isFull()) { // 最後のスタックが満杯でなければそこに追加
+            last.push(v);
+        } else { // 新しいスタックを作成して追加
+            Stack stack = new Stack(capacity);
+            stack.push(v);
+            stacks.add(stack);
+        }
+    }
+
+    // セットから値をポップするメソッド
+    public int pop() {
+        Stack last = getLastStack();
+        if (last == null) throw new EmptyStackException();
+        int v = last.pop();
+        if (last.size == 0) {
+            stacks.remove(stacks.size() - 1);
+        }
+        return v;
+    }
+
+    // 特定のインデックスのスタックから値をポップするメソッド
+    public int popAt(int index) {
+        return leftShift(index, true);
+    }
+
+    // インデックスのスタックから値をシフトするメソッド
+    public int leftShift(int index, boolean removeTop) {
+        Stack stack = stacks.get(index);
+        int removed_item;
+        if (removeTop) removed_item = stack.pop();
+        else removed_item = stack.removeBottom();
+        if (stack.isEmpty()) {
+            stacks.remove(index);
+        } else if (stacks.size() > index + 1) {
+            int v = leftShift(index + 1, false);
+            stack.push(v);
+        }
+        return removed_item;
+    }
+
+    // セットが空かどうかを確認
+    public boolean isEmpty() {
+        Stack last = getLastStack();
+        return last == null || last.isEmpty();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int capacity_per_substack = 5; // 各スタックの容量を設定
+        SetOfStacks set = new SetOfStacks(capacity_per_substack);
+        
+        // 34個の値をセットにプッシュ
+        for (int i = 0; i < 34; i++) {
+            set.push(i);
+        }
+
+        // 35個の値をセットからポップして表示
+        for (int i = 0; i < 35; i++) {
+            System.out.println("ポップされた値: " + set.pop());
+        }
+    }
+}
