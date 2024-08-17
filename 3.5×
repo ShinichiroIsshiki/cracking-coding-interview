@@ -1,0 +1,40 @@
+import java.util.Stack;
+
+import CtCILibrary.AssortedMethods;
+
+public class Main {
+
+    // スタックをソートするメソッド
+    public static void sort(Stack<Integer> s) {
+        Stack<Integer> r = new Stack<Integer>();
+        // 元のスタックsから要素を一つずつ取り出し、ソートされた順序でスタックrに挿入する
+        while(!s.isEmpty()) {
+            int tmp = s.pop();
+            // rのトップにある要素がtmpより大きい場合、それをsに戻す
+            while(!r.isEmpty() && r.peek() > tmp) {
+                s.push(r.pop());
+            }
+            // tmpをrにプッシュする
+            r.push(tmp);
+        }
+        
+        // 全ての要素を元のスタックsに戻す
+        while (!r.isEmpty()) {
+            s.push(r.pop());
+        }
+    }
+
+    public static void main(String [] args) {
+        Stack<Integer> s = new Stack<Integer>();
+        for (int i = 0; i < 10; i++) {
+            int r = AssortedMethods.randomIntInRange(0,  1000);
+            s.push(r);
+        }
+        
+        sort(s); // スタックsをソートする
+        
+        while(!s.isEmpty()) {
+            System.out.println(s.pop()); // ソートされたスタックから要素を取り出して表示する
+        }
+    }
+}
