@@ -1,0 +1,82 @@
+import java.util.LinkedList;
+import java.util.Queue;
+import CtCILibrary.AssortedMethods;
+import java.util.Stack;
+
+class MyQueue<T> {
+    Stack<T> stackNewest, stackOldest;
+
+    public MyQueue() {
+        stackNewest = new Stack<T>();
+        stackOldest = new Stack<T>();
+    }
+    
+    public int size() {
+        // キューに格納されている要素の総数を返す
+        return stackNewest.size() + stackOldest.size();
+    }
+    
+    public void add(T value) {
+        // 新しい要素をstackNewestにプッシュする（キューの末尾に追加）
+        stackNewest.push(value);
+    }
+    
+    /* stackNewestからstackOldestに要素を移動する
+     * 通常、stackOldestでキューの先頭の要素を操作するために行う
+     */
+    private void shiftStacks() {
+        // stackOldestが空の場合、stackNewestの全ての要素をstackOldestに移動する
+        if (stackOldest.isEmpty()) { 
+            while (!stackNewest.isEmpty()) {
+                stackOldest.push(stackNewest.pop());
+            }
+        }
+    }
+    
+    public T peek() {
+        // キューの先頭の要素を確認（削除せずに取得）
+        shiftStacks(); // 必要に応じて要素を移動
+        return stackOldest.peek(); // stackOldestのトップを返す
+    }
+    
+    public T remove() {
+        // キューの先頭の要素を削除して返す
+        shiftStacks(); // 必要に応じて要素を移動
+        return stackOldest.pop(); // stackOldestのトップを取り除いて返す
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyQueue<Integer> my_queue = new MyQueue<Integer>();    
+        
+        // 標準的なキューを使って結果を比較するためのテストキュー
+        Queue<Integer> test_queue = new LinkedList<Integer>();
+        
+        for (int i = 0; i < 10; i++) {
+            int choice = AssortedMethods.randomIntInRange(0, 10);
+            if (choice <= 5) { // エンキュー操作
+                int element = AssortedMethods.randomIntInRange(1, 10);
+                test_queue.add(element);
+                my_queue.add(element);
+                System.out.println("エンキュー: " + element);
+            } else if (test_queue.size() > 0) { // デキュー操作
+                int top1 = test_queue.remove();
+                int top2 = my_queue.remove();
+                if (top1 != top2) { // エラーのチェック
+                    System.out.println("******* エラー - 異なる要素: " + top1 + ", " + top2);
+                } 
+                System.out.println("デキュー: " + top1);
+            }
+            
+            // キューのサイズが一致しているか確認
+            if (test_queue.size() == my_queue.size()) {
+                if (test_queue.size() > 0 && test_queue.peek() != my_queue.peek()) {
+                    System.out.println("******* エラー - 異なる先頭要素: " + test_queue.peek() + ", " + my_queue.peek() + " ******");
+                }
+            } else {
+                System.out.println("******* エラー - サイズが異なる ******");
+            }
+        }
+    }
+}
