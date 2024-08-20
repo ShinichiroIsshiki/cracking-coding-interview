@@ -1,0 +1,149 @@
+import java.util.LinkedList;
+
+// グラフの構造を表すクラス
+class Graph {
+    public static int MAX_VERTICES = 6; // グラフの最大頂点数を定義
+    private Node vertices[]; // 頂点のリストを保持
+    public int count; // 現在の頂点数
+
+    public Graph() {
+        vertices = new Node[MAX_VERTICES]; // 頂点の配列を初期化
+        count = 0; // 頂点数を初期化
+    }
+
+    // グラフにノードを追加するメソッド
+    public void addNode(Node x) {
+        if (count < vertices.length) { // 頂点数が上限に達していないかチェック
+            vertices[count] = x; // 頂点を追加
+            count++;
+        } else {
+            System.out.print("グラフが満杯です"); // 頂点数が上限に達している場合のエラーメッセージ
+        }
+    }
+
+    // グラフの全ての頂点を返すメソッド
+    public Node[] getNodes() {
+        return vertices;
+    }
+}
+
+// ノード（頂点）を表すクラス
+class Node {
+    private Node adjacent[]; // 隣接するノードを保持する配列
+    public int adjacentCount; // 隣接ノードの数
+    private String vertex; // ノードの名前（ラベル）
+    public Main.State state; // ノードの状態を管理（未訪問、訪問済み、訪問中）
+
+    public Node(String vertex, int adjacentLength) {
+        this.vertex = vertex; // 頂点の名前をセット
+        adjacentCount = 0; // 隣接ノードのカウントを初期化
+        adjacent = new Node[adjacentLength]; // 隣接ノード配列を初期化
+    }
+
+    // ノードに隣接ノードを追加するメソッド
+    public void addAdjacent(Node x) {
+        if (adjacentCount < adjacent.length) { // 隣接ノード数が上限に達していないかチェック
+            this.adjacent[adjacentCount] = x; // 隣接ノードを追加
+            adjacentCount++;
+        } else {
+            System.out.print("これ以上隣接ノードを追加できません"); // 隣接ノード数が上限に達している場合のエラーメッセージ
+        }
+    }
+
+    // 隣接するノードの配列を返すメソッド
+    public Node[] getAdjacent() {
+        return adjacent;
+    }
+
+    // 頂点の名前を返すメソッド
+    public String getVertex() {
+        return vertex;
+    }
+}
+
+// グラフ内の経路を探すメインクラス
+public class Main {
+    // ノードの状態を表す列挙型
+    public enum State {
+        Unvisited, // 未訪問
+        Visited,   // 訪問済み
+        Visiting;  // 訪問中
+    }
+
+    public static void main(String a[]) {
+        Graph g = createNewGraph(); // グラフを生成
+        Node[] n = g.getNodes(); // グラフのノードを取得
+        Node start = n[3]; // 始点ノードd
+        Node end = n[5]; // 終点ノードf
+
+        // 始点から終点までの経路が存在するかを検索して結果を出力
+        boolean result = search(g, start, end);
+        if(result) {
+            System.out.println("経路が見つかりました"); // 経路が存在する場合
+        } else {
+            System.out.println("経路が見つかりませんでした"); // 経路が存在しない場合
+        }
+    }
+
+    // 新しいグラフを生成して返すメソッド
+    public static Graph createNewGraph() {
+        Graph g = new Graph();
+        Node[] temp = new Node[6];
+
+        // グラフの各ノードを作成
+        temp[0] = new Node("a", 3);
+        temp[1] = new Node("b", 0);
+        temp[2] = new Node("c", 0);
+        temp[3] = new Node("d", 1);
+        temp[4] = new Node("e", 1);
+        temp[5] = new Node("f", 0);
+
+        // ノード間のエッジ（隣接関係）を設定
+        temp[0].addAdjacent(temp[1]);
+        temp[0].addAdjacent(temp[2]);
+        temp[0].addAdjacent(temp[3]);
+        temp[3].addAdjacent(temp[4]);
+        temp[4].addAdjacent(temp[5]);
+
+        // グラフにノードを追加
+        for (int i = 0; i < 6; i++) {
+            g.addNode(temp[i]);
+        }
+
+        return g;
+    }
+
+    // 始点ノードから終点ノードまでの経路が存在するかを判定するメソッド
+    public static boolean search(Graph g, Node start, Node end) {
+        LinkedList<Node> q = new LinkedList<Node>(); // ノードを保持するキューを作成
+
+        // 全ノードを未訪問状態に設定
+        for (Node u : g.getNodes()) {
+            u.state = State.Unvisited;
+        }
+
+        start.state = State.Visiting; // 始点ノードを訪問中に設定
+        q.add(start); // 始点ノードをキューに追加
+
+        Node u;
+        while (!q.isEmpty()) {
+            u = q.removeFirst(); // キューの先頭ノードを取り出す
+            if (u != null) {
+                // 隣接ノードをすべてチェック
+                for (Node v : u.getAdjacent()) {
+                    if (v.state == State.Unvisited) { // 隣接ノードが未訪問なら
+                        if (v == end) {
+                            return true; // 終点ノードに到達したら true を返す
+                        } else {
+                            v.state = State.Visiting; // 訪問中に設定
+                            q.add(v); // キューに追加
+                        }
+                    }
+                }
+                u.state = State.Visited; // 現在のノードを訪問済みに設定
+            }
+        }
+
+        return false; // 終点に到達できなかった場合は false を返す
+    }
+}
