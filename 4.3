@@ -1,0 +1,90 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+class TreeNode {
+    public int data;  // ノードに格納されるデータ
+    public TreeNode left;  // 左の子ノード
+    public TreeNode right;  // 右の子ノード
+
+    // コンストラクタ: 新しいノードを作成し、そのデータを設定します。
+    public TreeNode(int data) {
+        this.data = data;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+public class Main {
+
+    // 与えられた二分探索木の各レベルに対して、同じ深さのノードを持つ連結リストを作成するメソッド
+    public static void createLevelLinkedList(TreeNode root, ArrayList<LinkedList<TreeNode>> lists, int level) {
+        if (root == null) return; // ベースケース：ノードがnullなら何もせずに戻る
+
+        LinkedList<TreeNode> list;
+        // 現在のレベルのリストがリスト集合にまだ含まれていない場合、新たにリストを作成する
+        if (lists.size() == level) {
+            list = new LinkedList<>();
+            /* リストは常にレベル順に処理される。したがって、初めてこのレベルiに到達した場合、
+             * レベル0からi-1まではすでに処理されているはずなので、新しいレベルをリストに追加できる。 */
+            lists.add(list);  
+        } else {
+            // 既にこのレベルのリストが存在する場合、それを取得する
+            list = lists.get(level);
+        }
+        // 現在のノードをこのレベルのリストに追加する
+        list.add(root);
+
+        // 左の子ノードに対して再帰的に同じ処理を行う
+        createLevelLinkedList(root.left, lists, level + 1);
+        // 右の子ノードに対しても再帰的に同じ処理を行う
+        createLevelLinkedList(root.right, lists, level + 1);
+    }
+
+    // 二分探索木のルートからレベルごとの連結リストを作成するためのエントリーポイント
+    public static ArrayList<LinkedList<TreeNode>> createLevelLinkedList(TreeNode root) {
+        ArrayList<LinkedList<TreeNode>> lists = new ArrayList<>();
+        // レベル0からスタートして、リストを作成する
+        createLevelLinkedList(root, lists, 0);
+        return lists;
+    }
+
+    // 結果を表示するメソッド
+    public static void printResult(ArrayList<LinkedList<TreeNode>> result) {
+        int depth = 0;
+        // 各レベルごとに連結リストを取り出し、その内容を出力する
+        for (LinkedList<TreeNode> entry : result) {
+            Iterator<TreeNode> i = entry.listIterator();
+            System.out.print("深さ " + depth + " の連結リスト:");
+            while (i.hasNext()) {
+                System.out.print(" " + i.next().data);
+            }
+            System.out.println();
+            depth++;
+        }
+    }
+
+    public static void main(String[] args) {
+        // ソートされた配列から二分探索木を作成するための例
+        int[] nodes_flattened = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        TreeNode root = createTreeFromArray(nodes_flattened);
+        ArrayList<LinkedList<TreeNode>> list = createLevelLinkedList(root);
+        printResult(list);
+    }
+
+    // ソートされた配列から高さが最小となる二分探索木を作成するヘルパーメソッド
+    public static TreeNode createTreeFromArray(int[] array) {
+        return createTreeFromArray(array, 0, array.length - 1);
+    }
+
+    // 再帰的に二分探索木を作成するメソッド
+    private static TreeNode createTreeFromArray(int[] array, int start, int end) {
+        if (end < start) return null;
+
+        int mid = (start + end) / 2;
+        TreeNode node = new TreeNode(array[mid]);
+        node.left = createTreeFromArray(array, start, mid - 1);
+        node.right = createTreeFromArray(array, mid + 1, end);
+        return node;
+    }
+}
