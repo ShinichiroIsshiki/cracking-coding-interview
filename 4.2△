@@ -1,0 +1,85 @@
+public class Main {
+
+    public static void main(String[] args) {
+        int[] array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        // 配列から最小高さの二分探索木を作成します。
+        TreeNode root = TreeNode.createMinimalBST(array);
+        System.out.println("根は？" + root.data);
+
+        // 作成された木が二分探索木として正しいかを確認します。
+        System.out.println("二分探索木が作れるか？ " + root.isBST());
+
+        // 木の高さを出力します。
+        System.out.println("木の高さ: " + root.height());
+    }
+}
+
+class TreeNode {
+    public int data;      
+    public TreeNode left;    
+    public TreeNode right; 
+
+    // コンストラクタ: 新しいノードを作成し、そのデータを設定します。
+    public TreeNode(int d) {
+        data = d;
+    }
+    
+    // 左の子ノードを設定し、親子関係を正しく設定します。
+    private void setLeftChild(TreeNode left) {
+        this.left = left;
+    }
+    
+    // 右の子ノードを設定し、親子関係を正しく設定します。
+    private void setRightChild(TreeNode right) {
+        this.right = right;
+    }
+    
+    // 木が正しい二分探索木(BST)であるかを確認するためのメソッド。
+    public boolean isBST() {
+        if (left != null) {
+            if (data < left.data || !left.isBST()) {
+                return false;
+            }
+        }
+        
+        if (right != null) {
+            if (data >= right.data || !right.isBST()) {
+                return false;
+            }
+        }        
+        
+        return true;
+    }
+    
+    // 木の高さを計算するメソッド。
+    public int height() {
+        int leftHeight = left != null ? left.height() : 0;
+        int rightHeight = right != null ? right.height() : 0;
+        return 1 + Math.max(leftHeight, rightHeight);
+    }
+    
+    // ソートされた配列から高さが最小となる二分探索木を再帰的に作成するメソッド。
+    private static TreeNode createMinimalBST(int arr[], int start, int end){
+        if (end < start) {
+            return null; // ベースケース: 範囲が無効な場合はnullを返す
+        }
+        
+        // 中間要素を選び、それをルートノードとします。
+        int mid = (start + end) / 2;
+        TreeNode n = new TreeNode(arr[mid]);
+        
+        // 左側の部分配列で左の子ノードを再帰的に作成します。
+        n.setLeftChild(createMinimalBST(arr, start, mid - 1));
+        
+        // 右側の部分配列で右の子ノードを再帰的に作成します。
+        n.setRightChild(createMinimalBST(arr, mid + 1, end));
+        
+        return n; // ルートノードを返します。
+    }
+    
+    // ソートされた配列から最小高さの二分探索木を作成するためのエントリーポイント。
+    public static TreeNode createMinimalBST(int[] array) {
+        return createMinimalBST(array, 0, array.length - 1);
+    }
+}
