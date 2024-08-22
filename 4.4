@@ -1,0 +1,52 @@
+import CtCILibrary.AssortedMethods;
+import CtCILibrary.TreeNode;
+
+public class Main {
+
+    // 二分木の高さを返す関数
+    public static int getHeight(TreeNode root) {
+        if (root == null) {
+            // 木が空の場合、高さは -1 とする（これはノードがないことを示す）
+            return -1;
+        }
+        // 再帰的に左と右の部分木の高さを計算し、その中で最大の高さに1を加えて返す
+        return Math.max(getHeight(root.left), getHeight(root.right)) + 1;
+    }
+
+    // 二分木が平衡かどうかを調べる関数
+    public static boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            // 空の木は平衡とみなされる
+            return true;
+        }
+
+        // 左部分木と右部分木の高さを取得
+        int heightDiff = getHeight(root.left) - getHeight(root.right);
+
+        // 高さの差が1より大きい場合は不平衡と判断
+        if (Math.abs(heightDiff) > 1) {
+            return false;
+        } else {
+            // 左右の部分木が平衡かどうか再帰的に確認する
+            return isBalanced(root.left) && isBalanced(root.right);
+        }
+    }
+
+    // メイン関数：テスト用
+    public static void main(String[] args) {
+        // バランスの取れた二分木を生成
+        int[] array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        TreeNode root = TreeNode.createMinimalBST(array);
+        System.out.println("Root? " + root.data); // 根ノードのデータを出力
+        System.out.println("Is balanced? " + isBalanced(root)); // 平衡かどうかを判定して出力
+        
+        // 乱数で不平衡になる可能性が高い二分木を生成
+        TreeNode unbalanced = new TreeNode(10);
+        for (int i = 0; i < 10; i++) {
+            unbalanced.insertInOrder(AssortedMethods.randomIntInRange(0, 100));
+        }
+        System.out.println("Root? " + unbalanced.data); // 根ノードのデータを出力
+        System.out.println("Is balanced? " + isBalanced(unbalanced)); // 平衡かどうかを判定して出力
+    }
+
+}
