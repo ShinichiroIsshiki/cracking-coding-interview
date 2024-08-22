@@ -1,0 +1,106 @@
+package Q4_05_Validate_BST;
+
+import CtCILibrary.TreeNode;
+
+public class Question {
+    // 前回処理したノードの値を保持する変数
+    public static Integer lastPrinted = null;
+
+    // 二分木が二分探索木（BST: Binary Search Tree）であるかを調べるメソッド
+    public static boolean checkBST(TreeNode node) {
+        return checkBST(node, true);
+    }
+
+    // 二分探索木かどうかを再帰的にチェックするメソッド
+    // isLeft は現在のノードが親ノードの左子か右子かを表す
+    public static boolean checkBST(TreeNode n, boolean isLeft) {
+        if (n == null) {
+            // ノードがnullの場合、その部分木はBSTと見なされる
+            return true;
+        }
+
+        // 左の部分木を再帰的にチェック
+        if (!checkBST(n.left, true)) {
+            return false;  // 左部分木がBSTでない場合、falseを返す
+        }
+
+        // 現在のノードをチェック
+        if (lastPrinted != null) {
+            if (isLeft) {
+                // 左の子は親と同じ値を持つことが許される
+                if (n.data < lastPrinted) {
+                    return false;  // 左の子が親より小さくなければならない
+                }
+            } else {
+                // 右の子は親と同じ値を持つことが許されない
+                if (n.data <= lastPrinted) {
+                    return false;  // 右の子が親より大きくなければならない
+                }
+            }
+        }
+        // 現在のノードの値を lastPrinted に更新
+        lastPrinted = n.data;
+
+        // 右の部分木を再帰的にチェック
+        if (!checkBST(n.right, false)) {
+            return false;  // 右部分木がBSTでない場合、falseを返す
+        }
+
+        // ここまで全てのチェックをクリアした場合、trueを返す
+        return true;
+    }
+
+    // メインメソッド：テスト用
+    public static void main(String[] args) {
+        // 極端な値を持つ配列を用いて二分探索木を作成
+        int[] array = {Integer.MIN_VALUE, Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 1, Integer.MAX_VALUE};
+        TreeNode node = TreeNode.createMinimalBST(array);
+
+        // 生成された二分探索木が正しいかチェック
+        System.out.println(checkBST(node));  // 正しい場合は true を出力
+
+        // テストケースを実行
+        test();
+    }
+
+    // 追加のテストケースを実行するメソッド
+    public static void test() {
+        TreeNode node;
+        boolean condition;
+        System.out.println("test cases for equals condition.");
+
+        /* 
+         * 以下の木は、左の子が親と同じ値を持つことが許されるため、正しいBSTと見なされる。
+         * 予想結果は true。
+         *   2
+         *  / \
+         * 2   3
+         *      \
+         *      4
+         */
+        int[] array2 = {1, 2, 3, 4};
+        node = TreeNode.createMinimalBST(array2);
+        node.left.data = 2;  // 左の子に親と同じ値を設定
+        node.print();
+        lastPrinted = null;  // lastPrinted をリセット
+        condition = checkBST(node);
+        System.out.println("should be true: " + condition);
+
+        /* 
+         * 以下の木は、右の子が親と同じ値を持つため、正しいBSTではない。
+         * 予想結果は false。
+         *   2
+         *  / \
+         * 1   2
+         *      \
+         *      4
+         */
+        int[] array3 = {1, 2, 3, 4};
+        node = TreeNode.createMinimalBST(array3);
+        node.right.data = 2;  // 右の子に親と同じ値を設定
+        node.print();
+        lastPrinted = null;  // lastPrinted をリセット
+        condition = checkBST(node);
+        System.out.println("should be false: " + condition);
+    }
+}
